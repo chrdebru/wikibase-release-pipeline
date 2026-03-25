@@ -22,6 +22,11 @@ http:
         servers:
           - url: "http://quickstatements:80"
 
+    ontodia:
+      loadBalancer:
+        servers:
+          - url: "http://ontodia:80"
+
   routers:
     wikibase-router:
       rule: 'Host(`{{ env "WIKIBASE_PUBLIC_HOST" }}`) && !PathPrefix(`/tools`)'
@@ -31,7 +36,7 @@ http:
     wdqs-router:
       rule: 'Host(`{{ env "WDQS_PUBLIC_HOST" }}`) && PathPrefix(`/sparql`) && (Method(`GET`) || Method(`OPTIONS`) || Method(`POST`))'
       service: wdqs
-      middlewares: [ wdqs-prefix, wdqs-headers, wdqs-cors-headers, wdqs-rate-limit ]
+      middlewares: [ wdqs-prefix, wdqs-headers, wdqs-rate-limit ]
       tls: {}
 
     wdqs-frontend-router:
@@ -45,6 +50,11 @@ http:
       middlewares: [ quickstatements-redirectregex, quickstatements-stripprefix ]
       tls: {}
 
+    ontodia-router:
+      rule: 'Host(`{{ env "ONTODIA_PUBLIC_HOST" }}`)'
+      service: ontodia
+      tls: {}
+
   middlewares:
     wdqs-prefix:
       addPrefix:
@@ -52,16 +62,14 @@ http:
 
     wdqs-headers:
       headers:
-        accessControlAllowMethods: "GET,OPTIONS,POST"
         customResponseHeaders:
           VARY: Accept
+          Access-Control-Allow-Origin: "*"
+          Access-Control-Allow-Methods: "GET,OPTIONS,POST"
+          Access-Control-Allow-Headers: "*"
         customRequestHeaders:
           X-BIGDATA-READ-ONLY: yes
           X-BIGDATA-MAX-QUERY-MILLIS: "300000"
-
-    wdqs-cors-headers:
-      headers:
-        accessControlAllowHeaders: "*"
 
     wdqs-rate-limit:
       rateLimit:

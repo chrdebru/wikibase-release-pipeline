@@ -155,7 +155,17 @@ services:
       start_period: 2m
 
   # --------------------------------------------------
-  # C. REVERSE PROXY AND SSL SERVICES
+  # C. ONTODIA
+  # --------------------------------------------------
+
+  ontodia:
+    image: nginx:alpine
+    restart: unless-stopped
+    volumes:
+      - ./ontodia:/usr/share/nginx/html:ro
+
+  # --------------------------------------------------
+  # D. REVERSE PROXY AND SSL SERVICES
   # --------------------------------------------------
 
   # This is the reverse proxy and SSL service
@@ -192,6 +202,7 @@ services:
     environment:
       WIKIBASE_PUBLIC_HOST: ${WIKIBASE_PUBLIC_HOST}
       WDQS_PUBLIC_HOST: ${WDQS_PUBLIC_HOST}
+      ONTODIA_PUBLIC_HOST: ${ONTODIA_PUBLIC_HOST}
 
 volumes:
   # A. CORE WIKIBASE SUITE SERVICES DATA

@@ -4,9 +4,7 @@ curl -L https://github.com/FiloSottile/mkcert/releases/latest/download/mkcert-v1
 chmod +x /usr/local/bin/mkcert
 mkcert -install
 
-mkcert -cert-file config/certs/cert.pem \
-       -key-file  config/certs/key.pem \
-       sitys.rise.uliege.be query.sitys.rise.uliege.be
+mkcert -cert-file cert.pem -key-file key.pem sitys.rise.uliege.be query.sitys.rise.uliege.be ontodia.sitys.rise.uliege.be
 
 1) Build all components locally
 
