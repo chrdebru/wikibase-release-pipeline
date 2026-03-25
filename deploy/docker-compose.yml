@@ -6,7 +6,7 @@ services:
   # --------------------------------------------------
 
   wikibase:
-    image: wikibase/wikibase:6
+    image: wikibase/wikibase:latest
     depends_on:
       mysql:
         condition: service_healthy
@@ -17,6 +17,7 @@ services:
       - ./config:/config:z
       - ./config/extensions:/var/www/html/extensions/extensions:z
       - ./config/Extensions.php:/var/www/html/LocalSettings.d/90_UserDefinedExtensions.php:z
+      - ./config/extra-install.sh:/extra-install.sh:z
       - wikibase-image-data:/var/www/html/images
       - quickstatements-data:/quickstatements/data
     environment:
@@ -41,7 +42,7 @@ services:
       start_period: 5m
 
   wikibase-jobrunner:
-    image: wikibase/wikibase:6
+    image: wikibase/wikibase:latest
     command: /jobrunner-entrypoint.sh
     depends_on:
       wikibase:
@@ -74,7 +75,7 @@ services:
   # the elasticsearch service, and the MW_ELASTIC_* vars from wikibase_variables
   # at the top of this file.
   elasticsearch:
-    image: wikibase/elasticsearch:1
+    image: wikibase/elasticsearch:latest
     restart: unless-stopped
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
@@ -87,7 +88,7 @@ services:
       start_period: 2m
 
   wdqs:
-    image: wikibase/wdqs:2
+    image: wikibase/wdqs:latest
     command: /runBlazegraph.sh
     depends_on:
       wikibase:
@@ -108,7 +109,7 @@ services:
       start_period: 2m
 
   wdqs-updater:
-    image: wikibase/wdqs:2
+    image: wikibase/wdqs:latest
     command: /runUpdate.sh
     depends_on:
       wdqs:
@@ -125,7 +126,7 @@ services:
       WIKIBASE_CONCEPT_URI: https://${WIKIBASE_PUBLIC_HOST}
 
   wdqs-frontend:
-    image: wikibase/wdqs-frontend:2
+    image: wikibase/wdqs-frontend:latest
     restart: unless-stopped
     volumes:
       - ./config:/config:z
@@ -138,7 +139,7 @@ services:
       start_period: 2m
 
   quickstatements:
-    image: wikibase/quickstatements:1
+    image: wikibase/quickstatements:latest
     depends_on:
       wikibase:
         condition: service_healthy
@@ -169,20 +170,12 @@ services:
       # https endpoint
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.websecure.asdefault"
-      - "--entrypoints.websecure.http.tls.certresolver=letsencrypt"
       # http to https redirect
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
-      # ACME SSL certificate generation
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.letsencrypt.acme.email=${MW_ADMIN_EMAIL}"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
-      # additionial traefik dynamic configuration via config file
+      # dynamic configuration via config file (includes TLS cert config)
       - "--providers.file.filename=/etc/traefik/dynamic.yml"
-      # Uncomment this line to only test ssl generation first, makes sure you don't run into letsencrypt rate limits
-      # - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
       # Uncomment the following line for debugging, also expose port 8080 below
       # - "--api.dashboard=true"
       # - "--api.insecure=true"
@@ -195,7 +188,7 @@ services:
       # - 8080:8080
     volumes:
       - ./config/traefik-dynamic.yml:/etc/traefik/dynamic.yml:ro
-      - traefik-letsencrypt-data:/letsencrypt
+      - ./config/certs:/certs:ro
     environment:
       WIKIBASE_PUBLIC_HOST: ${WIKIBASE_PUBLIC_HOST}
       WDQS_PUBLIC_HOST: ${WDQS_PUBLIC_HOST}
@@ -209,4 +202,3 @@ volumes:
   elasticsearch-data:
   quickstatements-data:
   # C. REVERSE PROXY AND SSL SERVICES DATA
-  traefik-letsencrypt-data:

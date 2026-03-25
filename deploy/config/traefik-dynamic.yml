@@ -26,20 +26,24 @@ http:
     wikibase-router:
       rule: 'Host(`{{ env "WIKIBASE_PUBLIC_HOST" }}`) && !PathPrefix(`/tools`)'
       service: wikibase
+      tls: {}
 
     wdqs-router:
       rule: 'Host(`{{ env "WDQS_PUBLIC_HOST" }}`) && PathPrefix(`/sparql`) && (Method(`GET`) || Method(`OPTIONS`) || Method(`POST`))'
       service: wdqs
       middlewares: [ wdqs-prefix, wdqs-headers, wdqs-cors-headers, wdqs-rate-limit ]
+      tls: {}
 
     wdqs-frontend-router:
       rule: 'Host(`{{ env "WDQS_PUBLIC_HOST" }}`) && !PathPrefix(`/sparql`)'
       service: wdqs-frontend
+      tls: {}
 
     quickstatements-router:
       rule: 'Host(`{{ env "WIKIBASE_PUBLIC_HOST" }}`) && PathPrefix(`/tools/quickstatements`)'
       service: quickstatements
       middlewares: [ quickstatements-redirectregex, quickstatements-stripprefix ]
+      tls: {}
 
   middlewares:
     wdqs-prefix:
@@ -74,3 +78,8 @@ http:
     quickstatements-stripprefix:
       stripPrefix:
         prefixes: [ /tools/quickstatements ]
+
+tls:
+  certificates:
+    - certFile: /certs/cert.pem
+      keyFile: /certs/key.pem
