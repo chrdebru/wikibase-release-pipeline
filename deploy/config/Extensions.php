@@ -13,3 +13,5 @@
 //   wfLoadExtension( 'WikibaseLexeme' );
 // here in Wikibase Suite Deploy you need to put
 //   wfLoadExtension( 'extensions/WikibaseLexeme' );
+
+$wgWBRepoSettings['string-limits']['multilang']['length'] = 2048;
