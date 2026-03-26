@@ -36,7 +36,15 @@
         }
 
         ReactDOM.render(
-            React.createElement(Ontodia.Workspace, {ref: onWorkspaceMounted}),
+            React.createElement(Ontodia.Workspace, {
+                ref: onWorkspaceMounted,
+                languages: [
+                    {code: 'fr', label: 'French'},
+                    {code: 'en', label: 'English'},
+                    {code: 'ru', label: 'Russian'},
+                ],
+                language: 'fr',
+            }),
             document.getElementById('container')
         );
     }
