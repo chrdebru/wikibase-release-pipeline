@@ -29,3 +29,5 @@ est une plateforme institutionnelle,,,,Plateforme technologique (https://www.not
 fait partie de l’équipe,,,,Personne (https://www.notion.so/Personne-3103fe2b3f2181afa06cca9affe0430f?pvs=21),,Equipe (https://www.notion.so/Equipe-3183fe2b3f2180228871c4ec845933c1?pvs=21),is part of the team,,
 a comme acknowledgement,,,,,,Acknowledgement (https://www.notion.so/Acknowledgement-32c3fe2b3f2180378b31f936766a52a6?pvs=21),has acknowledgement,,
 est une instance de,,,Indique que le sujet est une instance de la classe objet.,,,,,instance of,Indicates that the subject is an instance of the object class.
+de URI,,,Indique que le sujet appartient à une URI.,,,URI,,from URI,Indicates that the subject belongs to a Research Support Unit (URI).
+de CSRV,,,Indique que le sujet appartient à un CSRV.,,,CSRV,,from CSRV,Indicates that the subject belongs to a CSRV.
