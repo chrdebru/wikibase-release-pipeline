@@ -1,6 +1,8 @@
 import csv
 import json
+import re
 import sys
+import unicodedata
 import urllib3
 from pathlib import Path
 from typing import Optional
@@ -24,6 +26,20 @@ STRING_DATATYPES = {"string", "url", "external-id", "monolingualtext", "commonsM
 # Search
 # -----------------------------------------------------------------------------
 
+def strip_md_reference(value: str) -> str:
+    """Remove a trailing '(path/to/file.md)' from a value, keeping only the name."""
+    return re.sub(r'\s*\([^)]*\.md\)', '', value).strip()
+
+
+def normalize_label(label: str) -> str:
+    """Lowercase + strip + replace typographic apostrophes so comparisons are
+    not tripped up by curly-quote vs straight-quote mismatches between CSV
+    data and Wikibase stored labels."""
+    label = unicodedata.normalize("NFC", label)
+    label = label.replace("\u2019", "'").replace("\u2018", "'")
+    return label.strip().lower()
+
+
 def search_entity_by_label(client: WikibaseClient, label: str, entity_type: str,
                             language: str = "fr") -> Optional[str]:
     """Returns the entity ID if an exact label match is found, else None."""
@@ -37,7 +53,7 @@ def search_entity_by_label(client: WikibaseClient, label: str, entity_type: str,
     })
     response.raise_for_status()
     for result in response.json().get("search", []):
-        if result["label"].strip().lower() == label.strip().lower():
+        if normalize_label(result["label"]) == normalize_label(label):
             return result["id"]
     return None
 
@@ -228,13 +244,14 @@ def process_column(client: WikibaseClient, item_id: str,
     prop_id, datatype = resolve_property(client, column)
 
     if datatype == "wikibase-item":
-        target_id, created = find_or_create_item(client, value, language="fr")
+        label = strip_md_reference(value)
+        target_id, created = find_or_create_item(client, label, language="fr")
         action = "CREATED" if created else "FOUND"
         if has_item_claim(client, item_id, prop_id, target_id):
-            print(f"      EXISTS  [{column}] -> '{value}' ({target_id})")
+            print(f"      EXISTS  [{column}] -> '{label}' ({target_id})")
         else:
             add_item_claim(client, item_id, prop_id, target_id)
-            print(f"      LINKED  [{column}] -> '{value}' ({target_id}) [{action}]")
+            print(f"      LINKED  [{column}] -> '{label}' ({target_id}) [{action}]")
 
     elif datatype in STRING_DATATYPES:
         if has_string_claim(client, item_id, prop_id, value):
@@ -259,6 +276,14 @@ def find_platform_csv(platform_folder: Path) -> Optional[Path]:
     return None
 
 
+def find_equipment_csv(platform_folder: Path) -> Optional[Path]:
+    """Finds the CSV file whose name contains 'Equipement' (not _all)."""
+    for csv_file in platform_folder.rglob("Equipement*.csv"):
+        if not csv_file.stem.endswith("_all"):
+            return csv_file
+    return None
+
+
 def read_platform_rows(csv_path: Path) -> list[dict]:
     with open(csv_path, encoding="utf-8-sig") as f:
         return list(csv.DictReader(f))
@@ -275,7 +300,7 @@ def main():
     # ------------------------------------------------------------------
     # Step 1: Resolve required property and class IDs dynamically
     # ------------------------------------------------------------------
-    print("\n=== Step 1: Resolving 'instance of' property and 'Plateforme technologique' item ===")
+    print("\n=== Step 1: Resolving required properties and class items ===")
 
     instance_of_prop_id = search_entity_by_label(client, "est une instance de", "property", language="fr")
     if not instance_of_prop_id:
@@ -288,6 +313,18 @@ def main():
         print("  ERROR: Could not find item 'Plateforme technologique' in Wikibase. Run populate.py first.")
         sys.exit(1)
     print(f"  FOUND  'Plateforme technologique' item ({platform_class_id})")
+
+    equipment_class_id = search_entity_by_label(client, "Equipement", "item", language="fr")
+    if not equipment_class_id:
+        print("  ERROR: Could not find item 'Equipement' in Wikibase. Run populate.py first.")
+        sys.exit(1)
+    print(f"  FOUND  'Equipement' item ({equipment_class_id})")
+
+    est_mutualise_avec_prop_id = search_entity_by_label(client, "est mutualisé avec", "property", language="fr")
+    if not est_mutualise_avec_prop_id:
+        print("  ERROR: Could not find property 'est mutualisé avec' in Wikibase. Run populate_object_properties.py first.")
+        sys.exit(1)
+    print(f"  FOUND  'est mutualisé avec' property ({est_mutualise_avec_prop_id})")
 
     # ------------------------------------------------------------------
     # Step 2: Process each platform folder
@@ -345,6 +382,54 @@ def main():
                     print(f"    SET     description (fr) = '{value[:60]}{'...' if len(value) > 60 else ''}'")
                 else:
                     process_column(client, item_id, column, value)
+
+            # ------------------------------------------------------------------
+            # Process equipment belonging to this platform
+            # ------------------------------------------------------------------
+            equip_csv_path = find_equipment_csv(folder)
+            if not equip_csv_path:
+                print(f"    No equipment CSV found in {folder.name}")
+                continue
+
+            equip_rows = read_platform_rows(equip_csv_path)
+            print(f"\n    Processing equipment from '{equip_csv_path.name}' ({len(equip_rows)} entries)")
+
+            for equip_row in equip_rows:
+                equip_name = equip_row.get("Nom", "").strip()
+                if not equip_name:
+                    continue
+
+                print(f"\n      Equipment: {equip_name}")
+
+                equip_id, created = find_or_create_item(client, equip_name, language="fr")
+                print(f"        {'CREATED' if created else 'EXISTS '}  item '{equip_name}' ({equip_id})")
+
+                # instance of -> Equipement
+                if has_item_claim(client, equip_id, instance_of_prop_id, equipment_class_id):
+                    print(f"        EXISTS   instance of -> Equipement")
+                else:
+                    add_item_claim(client, equip_id, instance_of_prop_id, equipment_class_id)
+                    print(f"        LINKED   {equip_name} ({equip_id}) -[instance of]-> Equipement ({equipment_class_id})")
+
+                # est mutualisé avec -> platform
+                if has_item_claim(client, equip_id, est_mutualise_avec_prop_id, item_id):
+                    print(f"        EXISTS   est mutualisé avec -> {platform_name}")
+                else:
+                    add_item_claim(client, equip_id, est_mutualise_avec_prop_id, item_id)
+                    print(f"        LINKED   {equip_name} ({equip_id}) -[est mutualisé avec]-> {platform_name} ({item_id})")
+
+                # Process remaining columns (skip 'est mutualisé avec' — handled above)
+                for column, value in equip_row.items():
+                    if column in SKIP_COLUMNS or column == "est mutualisé avec":
+                        continue
+                    if not value or not value.strip():
+                        continue
+                    value = value.strip()
+                    if column == DESCRIPTION_COLUMN:
+                        set_description(client, equip_id, value, language="fr")
+                        print(f"        SET     description (fr) = '{value[:60]}{'...' if len(value) > 60 else ''}'")
+                    else:
+                        process_column(client, equip_id, column, value)
 
     print("\nDone.")
 
