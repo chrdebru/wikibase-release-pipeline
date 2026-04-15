@@ -284,6 +284,30 @@ def find_equipment_csv(platform_folder: Path) -> Optional[Path]:
     return None
 
 
+def find_expertise_csv(platform_folder: Path) -> Optional[Path]:
+    """Finds the CSV file whose name contains 'Expertise' (not _all)."""
+    for csv_file in platform_folder.rglob("Expertise*.csv"):
+        if not csv_file.stem.endswith("_all"):
+            return csv_file
+    return None
+
+
+def find_equipe_csv(platform_folder: Path) -> Optional[Path]:
+    """Finds the CSV file whose name contains 'Equipe' (not _all)."""
+    for csv_file in platform_folder.rglob("Equipe*.csv"):
+        if not csv_file.stem.endswith("_all"):
+            return csv_file
+    return None
+
+
+def find_responsable_csv(platform_folder: Path) -> Optional[Path]:
+    """Finds the CSV file whose name contains 'Responsable' (not _all)."""
+    for csv_file in platform_folder.rglob("Responsable*.csv"):
+        if not csv_file.stem.endswith("_all"):
+            return csv_file
+    return None
+
+
 def read_platform_rows(csv_path: Path) -> list[dict]:
     with open(csv_path, encoding="utf-8-sig") as f:
         return list(csv.DictReader(f))
@@ -325,6 +349,54 @@ def main():
         print("  ERROR: Could not find property 'est mutualisé avec' in Wikibase. Run populate_object_properties.py first.")
         sys.exit(1)
     print(f"  FOUND  'est mutualisé avec' property ({est_mutualise_avec_prop_id})")
+
+    expertise_class_id = search_entity_by_label(client, "Expertise", "item", language="fr")
+    if not expertise_class_id:
+        print("  ERROR: Could not find item 'Expertise' in Wikibase. Run populate.py first.")
+        sys.exit(1)
+    print(f"  FOUND  'Expertise' item ({expertise_class_id})")
+
+    a_comme_ressource_prop_id = search_entity_by_label(client, "a comme ressource", "property", language="fr")
+    if not a_comme_ressource_prop_id:
+        print("  ERROR: Could not find property 'a comme ressource' in Wikibase. Run populate_object_properties.py first.")
+        sys.exit(1)
+    print(f"  FOUND  'a comme ressource' property ({a_comme_ressource_prop_id})")
+
+    personne_class_id = search_entity_by_label(client, "Personne", "item", language="fr")
+    if not personne_class_id:
+        print("  ERROR: Could not find item 'Personne' in Wikibase. Run populate.py first.")
+        sys.exit(1)
+    print(f"  FOUND  'Personne' item ({personne_class_id})")
+
+    equipe_class_id = search_entity_by_label(client, "Equipe", "item", language="fr")
+    if not equipe_class_id:
+        print("  ERROR: Could not find item 'Equipe' in Wikibase. Run populate.py first.")
+        sys.exit(1)
+    print(f"  FOUND  'Equipe' item ({equipe_class_id})")
+
+    responsable_class_id = search_entity_by_label(client, "Responsable", "item", language="fr")
+    if not responsable_class_id:
+        print("  ERROR: Could not find item 'Responsable' in Wikibase. Run populate.py first.")
+        sys.exit(1)
+    print(f"  FOUND  'Responsable' item ({responsable_class_id})")
+
+    a_comme_equipe_prop_id = search_entity_by_label(client, "a comme équipe", "property", language="fr")
+    if not a_comme_equipe_prop_id:
+        print("  ERROR: Could not find property 'a comme équipe' in Wikibase. Run populate_object_properties.py first.")
+        sys.exit(1)
+    print(f"  FOUND  'a comme équipe' property ({a_comme_equipe_prop_id})")
+
+    fait_partie_de_equipe_prop_id = search_entity_by_label(client, "fait partie de l'équipe", "property", language="fr")
+    if not fait_partie_de_equipe_prop_id:
+        print("  ERROR: Could not find property 'fait partie de l\\'équipe' in Wikibase. Run populate_object_properties.py first.")
+        sys.exit(1)
+    print(f"  FOUND  'fait partie de l\\'équipe' property ({fait_partie_de_equipe_prop_id})")
+
+    a_comme_responsable_prop_id = search_entity_by_label(client, "a comme responsable", "property", language="fr")
+    if not a_comme_responsable_prop_id:
+        print("  ERROR: Could not find property 'a comme responsable' in Wikibase. Run populate_object_properties.py first.")
+        sys.exit(1)
+    print(f"  FOUND  'a comme responsable' property ({a_comme_responsable_prop_id})")
 
     # ------------------------------------------------------------------
     # Step 2: Process each platform folder
@@ -430,6 +502,157 @@ def main():
                         print(f"        SET     description (fr) = '{value[:60]}{'...' if len(value) > 60 else ''}'")
                     else:
                         process_column(client, equip_id, column, value)
+
+            # ------------------------------------------------------------------
+            # Process expertise belonging to this platform
+            # ------------------------------------------------------------------
+            expertise_csv_path = find_expertise_csv(folder)
+            if not expertise_csv_path:
+                print(f"    No expertise CSV found in {folder.name}")
+                continue
+
+            expertise_rows = read_platform_rows(expertise_csv_path)
+            print(f"\n    Processing expertise from '{expertise_csv_path.name}' ({len(expertise_rows)} entries)")
+
+            for expertise_row in expertise_rows:
+                expertise_name = expertise_row.get("Intitulé", "").strip()
+                if not expertise_name:
+                    continue
+
+                print(f"\n      Expertise: {expertise_name[:80]}{'...' if len(expertise_name) > 80 else ''}")
+
+                expertise_id, created = find_or_create_item(client, expertise_name, language="fr")
+                print(f"        {'CREATED' if created else 'EXISTS '}  item '{expertise_name[:60]}' ({expertise_id})")
+
+                # instance of -> Expertise
+                if has_item_claim(client, expertise_id, instance_of_prop_id, expertise_class_id):
+                    print(f"        EXISTS   instance of -> Expertise")
+                else:
+                    add_item_claim(client, expertise_id, instance_of_prop_id, expertise_class_id)
+                    print(f"        LINKED   -[instance of]-> Expertise ({expertise_class_id})")
+
+                # platform -[a comme ressource]-> expertise
+                if has_item_claim(client, item_id, a_comme_ressource_prop_id, expertise_id):
+                    print(f"        EXISTS   {platform_name} -[a comme ressource]-> expertise")
+                else:
+                    add_item_claim(client, item_id, a_comme_ressource_prop_id, expertise_id)
+                    print(f"        LINKED   {platform_name} ({item_id}) -[a comme ressource]-> expertise ({expertise_id})")
+
+                # Process remaining columns (skip 'Intitulé' — used as label)
+                for column, value in expertise_row.items():
+                    if column == "Intitulé" or not value or not value.strip():
+                        continue
+                    value = value.strip()
+                    if column == DESCRIPTION_COLUMN:
+                        set_description(client, expertise_id, value, language="fr")
+                        print(f"        SET     description (fr) = '{value[:60]}{'...' if len(value) > 60 else ''}'")
+                    else:
+                        process_column(client, expertise_id, column, value)
+
+            # ------------------------------------------------------------------
+            # Process equipe belonging to this platform
+            # ------------------------------------------------------------------
+            equipe_csv_path = find_equipe_csv(folder)
+            if not equipe_csv_path:
+                print(f"    No equipe CSV found in {folder.name}")
+            else:
+                equipe_rows = read_platform_rows(equipe_csv_path)
+                print(f"\n    Processing equipe from '{equipe_csv_path.name}' ({len(equipe_rows)} entries)")
+
+                # Create one Equipe entity per platform to act as the team node
+                equipe_label = f"Equipe - {platform_name}"
+                equipe_node_id, created = find_or_create_item(client, equipe_label, language="fr")
+                print(f"      {'CREATED' if created else 'EXISTS '}  team item '{equipe_label}' ({equipe_node_id})")
+
+                if has_item_claim(client, equipe_node_id, instance_of_prop_id, equipe_class_id):
+                    print(f"      EXISTS   instance of -> Equipe")
+                else:
+                    add_item_claim(client, equipe_node_id, instance_of_prop_id, equipe_class_id)
+                    print(f"      LINKED   '{equipe_label}' ({equipe_node_id}) -[instance of]-> Equipe ({equipe_class_id})")
+
+                if has_item_claim(client, item_id, a_comme_equipe_prop_id, equipe_node_id):
+                    print(f"      EXISTS   {platform_name} -[a comme équipe]-> '{equipe_label}'")
+                else:
+                    add_item_claim(client, item_id, a_comme_equipe_prop_id, equipe_node_id)
+                    print(f"      LINKED   {platform_name} ({item_id}) -[a comme équipe]-> '{equipe_label}' ({equipe_node_id})")
+
+                for equipe_row in equipe_rows:
+                    nom = equipe_row.get("Nom", "").strip()
+                    prenom = equipe_row.get("Prénom", "").strip()
+                    person_name = f"{prenom} {nom}".strip()
+                    if not person_name:
+                        continue
+
+                    print(f"\n      Person: {person_name}")
+
+                    person_id, created = find_or_create_item(client, person_name, language="fr")
+                    print(f"        {'CREATED' if created else 'EXISTS '}  item '{person_name}' ({person_id})")
+
+                    if has_item_claim(client, person_id, instance_of_prop_id, personne_class_id):
+                        print(f"        EXISTS   instance of -> Personne")
+                    else:
+                        add_item_claim(client, person_id, instance_of_prop_id, personne_class_id)
+                        print(f"        LINKED   '{person_name}' ({person_id}) -[instance of]-> Personne ({personne_class_id})")
+
+                    if has_item_claim(client, person_id, fait_partie_de_equipe_prop_id, equipe_node_id):
+                        print(f"        EXISTS   fait partie de l'équipe -> '{equipe_label}'")
+                    else:
+                        add_item_claim(client, person_id, fait_partie_de_equipe_prop_id, equipe_node_id)
+                        print(f"        LINKED   '{person_name}' ({person_id}) -[fait partie de l'équipe]-> '{equipe_label}' ({equipe_node_id})")
+
+                    for column, value in equipe_row.items():
+                        if column in {"Nom", "Prénom"} or not value or not value.strip():
+                            continue
+                        value = value.strip()
+                        if column == DESCRIPTION_COLUMN:
+                            set_description(client, person_id, value, language="fr")
+                            print(f"        SET     description (fr) = '{value[:60]}{'...' if len(value) > 60 else ''}'")
+                        else:
+                            process_column(client, person_id, column, value)
+
+            # ------------------------------------------------------------------
+            # Process responsable belonging to this platform
+            # ------------------------------------------------------------------
+            responsable_csv_path = find_responsable_csv(folder)
+            if not responsable_csv_path:
+                print(f"    No responsable CSV found in {folder.name}")
+            else:
+                responsable_rows = read_platform_rows(responsable_csv_path)
+                print(f"\n    Processing responsable from '{responsable_csv_path.name}' ({len(responsable_rows)} entries)")
+
+                for resp_row in responsable_rows:
+                    nom = resp_row.get("Nom", "").strip()
+                    prenom = resp_row.get("Prénom", "").strip()
+                    person_name = f"{prenom} {nom}".strip()
+                    if not person_name:
+                        continue
+
+                    print(f"\n      Responsable: {person_name}")
+
+                    person_id, created = find_or_create_item(client, person_name, language="fr")
+                    print(f"        {'CREATED' if created else 'EXISTS '}  item '{person_name}' ({person_id})")
+
+                    if has_item_claim(client, person_id, instance_of_prop_id, responsable_class_id):
+                        print(f"        EXISTS   instance of -> Responsable")
+                    else:
+                        add_item_claim(client, person_id, instance_of_prop_id, responsable_class_id)
+                        print(f"        LINKED   '{person_name}' ({person_id}) -[instance of]-> Responsable ({responsable_class_id})")
+
+                    if has_item_claim(client, item_id, a_comme_responsable_prop_id, person_id):
+                        print(f"        EXISTS   {platform_name} -[a comme responsable]-> '{person_name}'")
+                    else:
+                        add_item_claim(client, item_id, a_comme_responsable_prop_id, person_id)
+                        print(f"        LINKED   {platform_name} ({item_id}) -[a comme responsable]-> '{person_name}' ({person_id})")
+
+                    for column, value in resp_row.items():
+                        if column in {"Nom", "Prénom"} or not value or not value.strip():
+                            continue
+                        value = value.strip()
+                        if column == DESCRIPTION_COLUMN:
+                            set_description(client, person_id, value, language="fr")
+                            print(f"        SET     description (fr) = '{value[:60]}{'...' if len(value) > 60 else ''}'")
+                        else:
+                            process_column(client, person_id, column, value)
 
     print("\nDone.")
 
