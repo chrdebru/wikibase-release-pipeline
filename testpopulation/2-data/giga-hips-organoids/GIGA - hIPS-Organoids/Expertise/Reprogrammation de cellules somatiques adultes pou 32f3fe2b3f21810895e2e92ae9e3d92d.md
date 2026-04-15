@@ -1,0 +1,3 @@
+# Reprogrammation de cellules somatiques adultes pour générer des  cellules souches pluripotentes induites humaines (hIPS)
+
+Description: Technique de reprogrammation cellulaire consistant à introduire des facteurs de transcription spécifiques (classiquement OCT4, SOX2, KLF4, c-MYC) dans des cellules somatiques adultes différenciées afin de leur conférer un état de pluripotence, permettant leur différenciation ultérieure en tout type cellulaire d’intérêt.
