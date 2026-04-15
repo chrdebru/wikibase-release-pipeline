@@ -5,7 +5,7 @@ from dotenv import dotenv_values
 
 
 def load_config(env_file: str = None) -> dict:
-    path = Path(env_file) if env_file else Path(__file__).parent / "../deploy/.env"
+    path = Path(env_file) if env_file else Path(__file__).parent / "../../deploy/.env"
     values = dotenv_values(path)
     return {
         "base_url": f"https://{values['WIKIBASE_PUBLIC_HOST']}",
