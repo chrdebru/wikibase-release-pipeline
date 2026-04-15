@@ -1,0 +1,77 @@
+﻿Nom de la classe,Autres labels,Description,Hiérarchie (classe parent),Propriétés de données,Propriétés d’objet
+UR,,"Unité de recherche facultaire. Groupe structuré de chercheurs travaillant sur des thématiques scientifiques communes. ",Organisation,,UR est dans Faculté (https://www.notion.so/UR-est-dans-Facult-3103fe2b3f2181eabf55c3e8e1de2c60?pvs=21)
+Service,,"Prestation formalisée, structurée et proposée par une plateforme, mobilisant une ou plusieurs expertises et/ou équipements, en réponse à un besoin interne ou externe.
+Une prestation est rémunérée ou a un accord différent.
+Exemple : analyse, formation, conseil, support technique",Ressource,,
+Plateforme technologique,Plateau technologique,"Infrastructure de recherche à la pointe de la technologie (suivant la définition du FNRS). Une infrastructure de recherche est une installation spécialisée qui fournit des ressources et des services à la communauté scientifique pour permettre de conduire des recherches à la pointe au niveau scientifique et technologique dans différents domaines. ",,Maquette promotionnelle (https://www.notion.so/Maquette-promotionnelle-31a3fe2b3f218038b079f30ed3fb4665?pvs=21),"a comme ressource (https://www.notion.so/a-comme-ressource-31a3fe2b3f2180b79880d70cd4b45c9e?pvs=21), a comme cas d’usage (https://www.notion.so/a-comme-cas-d-usage-31a3fe2b3f218044bb5bf75d88c937f2?pvs=21), est sous la gourvenance de (https://www.notion.so/est-sous-la-gourvenance-de-31a3fe2b3f2180f58f97e398ccd95c65?pvs=21), a comme équipe (https://www.notion.so/a-comme-quipe-3253fe2b3f218059a44fd7e18e843394?pvs=21), est une plateforme institutionnelle (https://www.notion.so/est-une-plateforme-institutionnelle-3253fe2b3f2180bf91b5d4c020bae2ea?pvs=21)"
+Image,,"Support visuel numérique associé à une entité (équipement, plateforme ou personne) permettant son identification, son illustration ou sa documentation.",,"Copyright (https://www.notion.so/Copyright-32c3fe2b3f21802f9440c8b278768773?pvs=21), License (https://www.notion.so/License-32c3fe2b3f2180f1a66fe22ecec6f07c?pvs=21)",
+Logo,,Elément graphique officiel représentant l’identité visuelle institutionnelle d’une organisation ou d’une plateforme.,Image,,
+Responsable,,"Responsable d’une plateforme technologique. Personne officiellement désignée pour assurer la supervision scientifique, stratégique et/ou opérationnelle de la plateforme technologique.",Personne,,
+CSRV,,"Conseil sectoriel de la recherche et de la valorisation.
+Exemple : CSRV-SS, CSRV-ST, CSRV-SH",Organisation,,
+Production scientifique,,"Résultat/output d’une activité de recherche comme un article, thèse, base de donnée, ou brevet.",Impact,"Lien ORBI (https://www.notion.so/Lien-ORBI-3103fe2b3f2181f59e6bf5dd9779a9f8?pvs=21), Type de publication (https://www.notion.so/Type-de-publication-3103fe2b3f21814888e8f51930c88db4?pvs=21), DOI (https://www.notion.so/DOI-32c3fe2b3f218067b454c12fdf5d091c?pvs=21)",
+Certification,,"Certification officielle délivrée par une autorité compétente attestant qu’un service, un équipement, un processus, une plateforme technologique respecte les exigences d’une norme. 
+Exemple : norme ISO, GMP (group manufacturing practices), cleanroom.",Garantie de qualité,,
+Faculté,,"Composante d’une université organisée autour d’un domaine d’enseignement et de recherche.
+Elle permet de situer institutionnellement une personne ou une ressource, par exemple.
+Exemple : Faculté de Médecine, Faculté des Sciences",Organisation,,"Faculté fait partie de CSRV (https://www.notion.so/Facult-fait-partie-de-CSRV-3103fe2b3f21819ba1d6d86047a5df8b?pvs=21), Faculté est dans CSRV (https://www.notion.so/Facult-est-dans-CSRV-3253fe2b3f21806d9812d3aae2bfaa34?pvs=21)"
+Conditions d’accès,,"Ensemble des modalités pratiques et réglementaires permettant à un utilisateur d’accéder à une plateforme, un équipement, ou un service. Par exemple, public cible / accessibilité ( interne, externe, cliniciens, PME), mode d’utilisation (autonome ou accompagné), prérequis utilisateur, réservation. ",,Lien de réservation (https://www.notion.so/Lien-de-r-servation-31a3fe2b3f21805daca8fffce52c2016?pvs=21),
+Localisation,,"Informations permettant de situer précisément une personne, une ressource ou tout autre élément dans un espace donné.
+Elle peut inclure, par exemple, une adresse, un campus, un bâtiment, un étage ou un local.
+
+",,"Adresse (https://www.notion.so/Adresse-31a3fe2b3f2180ffaa82e56b8feaf0ad?pvs=21), Etage (https://www.notion.so/Etage-31a3fe2b3f2180e487bad6c34d15fb5a?pvs=21), Local (https://www.notion.so/Local-31a3fe2b3f21806da47de5170d54e6ba?pvs=21)",
+Personne,,"Individu physique impliqué dans une plateforme ou des ressources.
+Elle peut être identifiée et contactée via des informations telles que son nom, ses coordonnées et sa fonction. Elle est rattachée à une unité de recherche, une faculté.
+
+",,"Fonction (https://www.notion.so/Fonction-3103fe2b3f2181cab857f8e54b57edba?pvs=21), Prénom (https://www.notion.so/Pr-nom-31a3fe2b3f218041989afd6b96d9bdff?pvs=21)","a comme identité scientifique numérique (https://www.notion.so/a-comme-identit-scientifique-num-rique-31a3fe2b3f2180dca67de48bd304a049?pvs=21), fait partie de l’équipe (https://www.notion.so/fait-partie-de-l-quipe-32c3fe2b3f2180319259fbcd5eba1003?pvs=21)"
+Organisation,,"Entité institutionnelle, structurée et reconnue par l’université. 
+Exemple : faculté, unité de recherche, CSRV ",,,
+Equipement,,"Ressource matérielle identifiée, localisée et mobilisable par une plateforme technologique pour soutenir ses expertises et délivrer ses services.",Ressource,"Modèle de l’équipement (https://www.notion.so/Mod-le-de-l-quipement-31a3fe2b3f218098b876c441233bdfc0?pvs=21), Marque de l’équipement (https://www.notion.so/Marque-de-l-quipement-31a3fe2b3f2180e5a9cacbfd2a8921a0?pvs=21)",
+URI,,Unité de recherche interfacultaire.,Organisation,,URI est dans CSRV (https://www.notion.so/URI-est-dans-CSRV-3103fe2b3f2181fba7b8d1fd3815aa93?pvs=21)
+Domaine scientifique,,"Champ large de compétence, structuré d’une plateforme, d’une ressource, d’une personne. ",,,
+Expertise,,"Domaine de compétence scientifique ou technologique maîtrisé par une plateforme ou une équipe, reposant sur des connaissances, méthodes et savoir-faire démontrés, et mobilisable dans des projets de recherche ou des collaborations externes.",Ressource,,
+Plateforme thématique,,"Une plateforme thématique regroupe différentes plateformes technologiques / plateaux. ",,,Plateforme thématique est dans CARE (https://www.notion.so/Plateforme-th-matique-est-dans-CARE-31a3fe2b3f218052b563f9cd1fe93c67?pvs=21)
+CARE,,"Cellule d’Appui à la Recherche et à l’Enseignement. Une CARE contient des plateformes thématiques, contenant elles-mêmes des plateformes technologiques ou plateaux.",,,
+Logiciel,,"Ressource numérique identifiée, utilisée par une plateforme technologique pour produire, analyser, traiter, visualiser ou stocker des données dans le cadre de ses expertises et services.",Ressource,Version du logiciel (https://www.notion.so/Version-du-logiciel-31a3fe2b3f21805ca751dd1c0f94748e?pvs=21),
+Ressource,,"Moyen mis à disposition pour soutenir l’enseignement, la recherche et les services. Parmi les ressources, on retrouve des équipements, des services, des logiciels, des expertises, des infrastructures. ",,,"a comme conditions d’accès (https://www.notion.so/a-comme-conditions-d-acc-s-3103fe2b3f21818084c6e04910d39412?pvs=21), est associé à une autre ressource (https://www.notion.so/est-associ-une-autre-ressource-31a3fe2b3f2180048d95e89cdb598d12?pvs=21), est mutualisé avec (https://www.notion.so/est-mutualis-avec-31a3fe2b3f2180b49ec6d4885bf85cad?pvs=21)"
+Equipe,Team,"Ensemble des personnes contribuant de manière structurée au fonctionnement scientifique, technique ou opérationnel d’une plateforme technologique.",,,
+Identité scientifique numérique,,"Ensemble des identifiants persistants et profils en ligne permettant d’identifier de manière univoque un chercheur ou un membre d’une plateforme dans les écosystèmes académiques, scientifiques et professionnels numériques. 
+Exemple : profil ORBI, identifiant ORCID, profil LinkedIn, Google Scholar",,"Profil ORBI (https://www.notion.so/Profil-ORBI-31a3fe2b3f2180ac9305e74c84a12a64?pvs=21), ORCID (https://www.notion.so/ORCID-31a3fe2b3f218048906df82d80e30619?pvs=21), Google Scholar (https://www.notion.so/Google-Scholar-31a3fe2b3f21809ca96ef5372a8227fa?pvs=21)",
+Cas d’usage,,"Application concrète et contextualisée des ressources d’une plateforme dans un objectif scientifique, clinique, technologique ou industriel déterminé.",,,
+Impact,,"L’impact désigne la capacité d’une plateforme à exercer une influence, une visibilité et une reconnaissance au-delà de son périmètre immédiat, à l’échelle institutionnelle, nationale ou internationale. 
+Exemple : production scientifique, retour d’expérience (témoignage), article de presse",,,
+Retour d’expérience,,"Information fournie par un utilisateur ou un bénéficiaire décrivant son vécu, son avis ou son appréciation concernant une ressource ou une plateforme.
+Il permet d’apporter un éclairage concret sur son utilisation, sa qualité, son efficacité ou sa pertinence.
+
+",Impact,"Témoignage (https://www.notion.so/T-moignage-3253fe2b3f2180039221da129723d0f8?pvs=21), Témoignant (https://www.notion.so/T-moignant-3253fe2b3f2180a0bf91fd84497b1a27?pvs=21)",
+Article de presse,,"Article, vidéos apparus dans la presse qui parle de la plateforme.",Impact,,
+Gouvernance,,"Ensemble des informations relatives à la gouvernance qui structure, coordonne et oriente les plateformes au sein des clusters thématiques ou institutionnels. 
+Exemple : CARE, plateforme thématique, plateau technologique",,,Plateforme technologique est dans plateforme thématique (https://www.notion.so/Plateforme-technologique-est-dans-plateforme-th-matique-31a3fe2b3f21801daee5fc5f68b515b9?pvs=21)
+Bâtiment,,"Exemple : B60, B28, B4, …",Localisation,,
+Campus,,"Exemple : Campus d’Arlon, Campus de Gembloux, Campus de Liège Centre-Ville, Campus de Liège Sart Tilman",Localisation,,
+Bénéficiaire,,"Public cible d’une ressource. Indique qui peut bénéficier des ressources d’une plateforme.
+Exemple : chercheurs ULiège, Autres universités, entreprises, centres de recherche",Conditions d’accès,Type de bénéficiaire (https://www.notion.so/Type-de-b-n-ficiaire-3253fe2b3f21804d96c4cf06ebba38a9?pvs=21),
+Infrastructure,,"Installation spécialisée fournissant l’environnement physique et technique nécessaire à des activités scientifiques ou expérimentales.
+Exemples : salle blanche (clean room), laboratoire de culture cellulaire, serre expérimentale, chambre climatique, animalerie, installation de confinement biologique",Ressource,Caractéristique de l’infrastructure (https://www.notion.so/Caract-ristique-de-l-infrastructure-31a3fe2b3f2180f18f53c7fa6d52c693?pvs=21),
+Norme de sécurité,,"Ensemble de règles, standards et procédures techniques visant à garantir la protection des personnes, des équipements, de l’environnement et des données lors de l’utilisation d’une infrastructure ou de la réalisation d’activités scientifiques.
+Ces normes définissent les conditions de manipulation, d’accès, d’exploitation et de maintenance des installations.
+Exemples : niveaux de biosécurité (BSL1, BSL2, BSL3), règles de confinement biologique, normes de sécurité laser, protocoles de manipulation chimique",Garantie de qualité,,
+Conformité,,"Respect des lois, règlements et exigences légales applicables aux activités scientifiques, aux infrastructures et aux équipements dans un cadre institutionnel, national ou international.
+Elle garantit que les activités menées respectent les obligations légales et les cadres réglementaires en vigueur.
+Exemples :
+réglementation sur l’expérimentation animale
+autorisations biosécurité, réglementation sur les substances chimiques",Garantie de qualité,,
+Garantie de qualité,,"Ensemble des preuves qu’une plateforme ou une ressource répond à des standards reconnus de qualité, de sécurité et de conformité.
+Elle s’appuie notamment sur des accréditations, certifications et normes applicables.",,Portée de la garantie de qualité (https://www.notion.so/Port-e-de-la-garantie-de-qualit-31a3fe2b3f21806982f6e6bc3bc9e165?pvs=21),
+Plateforme institutionnelle,,“Plateforme” (ou groupe de plateformes/ CARE) qui a été estampillée “ULiège”. Plateforme reconnue par l’institution.,,,
+Accréditation,,"Accréditation attestant la compétence technique et la capacité à réaliser des essais, analyses ou certifications. C'est une reconnaissance de la compétence.",Garantie de qualité,,
+Coordonnées,,"Informations permettant de contacter une personne, une plateforme, une organisation. Elles comprennent généralement l’adresse e-mail, le numéro de téléphone, l’adresse postale ou tout autre moyen de communication.",,,
+Photo,,"Image permettant de représenter visuellement une personne, une ressource (par exemple un équipement), un lieu ou tout autre élément pertinent.
+Elle sert à illustrer, identifier ou documenter cet élément.
+
+",Image,,
+Laboratoire de recherche,,"Equipe ou une structure académique consacrée à des activités de recherche dans un domaine spécifique. Un laboratoire de recherche est rattaché à une unité de recherche facultaire ou interfacultaire. ",,,"Labo est dans UR (https://www.notion.so/Labo-est-dans-UR-3253fe2b3f2180f0a4e5f01a9b2a57e0?pvs=21), Labo est dans URI (https://www.notion.so/Labo-est-dans-URI-3253fe2b3f21800a8e65fc0baeaa6744?pvs=21)"
+Implantations du CHU de Liège,,"Exemples: Sart Tilman, Lucien Brull",Localisation,,
+Autre,,"Exemple : CSL, Département, etc. ",Organisation,,
+Acknowledgement,,"Mention explicite de reconnaissance indiquant qu’un financement, un soutien, une contribution ou une collaboration a participé à la réalisation d’un projet, d’une publication, d’un équipement ou d’une activité.
+Reconnaissance du financement, remerciements à mettre dans une publication, etc. ",,"Source du financement (https://www.notion.so/Source-du-financement-32c3fe2b3f2180dc9af4db51968ccedd?pvs=21), Texte pour publication (https://www.notion.so/Texte-pour-publication-32c3fe2b3f2180a48e45d91e692ae625?pvs=21)",
