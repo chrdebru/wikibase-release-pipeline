@@ -1,10 +1,10 @@
 Nom,Bonnes pratiques,Cardinalité,Description,Domaine,Portée,Restriction,English name,Alternative labels (EN),Description (EN)
 Site web,"Plateforme technologique, Organisation, Article de presse, Campus, Personne",,Lien du site web ,,URL,,Website,,Website link
-Fonction,,,"Fonction d’une personne: responsable, utilisateur, fournisseur de service, …",Personne (https://www.notion.so/Personne-3103fe2b3f2181afa06cca9affe0430f?pvs=21),String,,Role,,"A person’s role: manager, user, service provider, etc."
+Fonction,,,"Fonction d'une personne: responsable, utilisateur, fournisseur de service, …",Personne (https://www.notion.so/Personne-3103fe2b3f2181afa06cca9affe0430f?pvs=21),String,,Role,,"A person's role: manager, user, service provider, etc."
 Type de publication,,,"Article, dataset, these, brevet, autres",Production scientifique (https://www.notion.so/Production-scientifique-3103fe2b3f2181169b79eded2d24297f?pvs=21),String,,Publication type,,"Article, dataset, thesis, patent, others."
-Description,"Plateforme technologique, ressource, image, Domaine scientifique, Cas d’usage, Bénéficiaire",exactly 1,"Texte structuré et orienté communication qui synthétise son positionnement, ses expertises, ses ressources et sa valeur ajoutée, dans une optique de visibilité interne et externe.",,String,,Description,,"Structured, communication-oriented text that summarizes its positioning, expertise, resources, and added value, with a view to internal and external visibility."
-Lien ORBI,,,Lien orbi d’une production scientifique,Production scientifique (https://www.notion.so/Production-scientifique-3103fe2b3f2181169b79eded2d24297f?pvs=21),URL,,ORBI link,,ORBI link for a scientific output.
-Catégorie,"Logiciel, Infrastructure, Equipement",,"Niveau générique de classification d’une ressource, permettant de la regrouper avec d’autres ressources partageant une même fonction ou une même famille technologique.
+Description,"Plateforme technologique, ressource, image, Domaine scientifique, Cas d'usage, Bénéficiaire",exactly 1,"Texte structuré et orienté communication qui synthétise son positionnement, ses expertises, ses ressources et sa valeur ajoutée, dans une optique de visibilité interne et externe.",,String,,Description,,"Structured, communication-oriented text that summarizes its positioning, expertise, resources, and added value, with a view to internal and external visibility."
+Lien ORBI,,,Lien orbi d'une production scientifique,Production scientifique (https://www.notion.so/Production-scientifique-3103fe2b3f2181169b79eded2d24297f?pvs=21),URL,,ORBI link,,ORBI link for a scientific output.
+Catégorie,"Logiciel, Infrastructure, Equipement",,"Niveau générique de classification d'une ressource, permettant de la regrouper avec d'autres ressources partageant une même fonction ou une même famille technologique.
 Exemple pour Logiciel : analyse de données, acquisition de données, traitement du signal, algorithme, etc.
 Exemple pour Equipement : Microspcope, téléscope, Spectromètre de masse, etc.
 Exemple pour Infrastructure : salle blanche (clean room), laboratoire de culture cellulaire, serre expérimentale, chambre climatique, animalerie, installation de confinement biologique, etc.",,String,,Category,,"Generic level of classification of a resource, allowing it to be grouped with other resources that share the same function or technological family.
@@ -12,7 +12,7 @@ Example for Software: data analysis, data acquisition, signal processing, algori
 Example for Equipment: microscope, telescope, mass spectrometer, etc.
 Example for Infrastructure: clean room, cell culture laboratory, greenhouse, climate chamber, animal facility, biological containment facility, etc."
 Acronyme,"Plateforme technologique, organisation, CARE",,,,String,,Acronym,,
-Nom,"Plateforme technologique, ressource, organisation, CARE; Personne, Cas d’usage, Domaine scientifique, Garantie de qualité; Impact",,,,String,,Name,,
+Nom,"Plateforme technologique, ressource, organisation, CARE; Personne, Cas d'usage, Domaine scientifique, Garantie de qualité; Impact",,,,String,,Name,,
 Prénom,,,,Personne (https://www.notion.so/Personne-3103fe2b3f2181afa06cca9affe0430f?pvs=21),String,,First name,,
 Téléphone,"Personne, Coordonnées",,,,String,,Phone,,
 Email,"Personne, Coordonnées",,,,String,,Email,,
@@ -23,22 +23,22 @@ Adresse,,,,Localisation (https://www.notion.so/Localisation-3103fe2b3f218116b214
 Etage,,,,Localisation (https://www.notion.so/Localisation-3103fe2b3f218116b214e4103d2678e7?pvs=21),String,,Floor,,
 Local,,,,Localisation (https://www.notion.so/Localisation-3103fe2b3f218116b214e4103d2678e7?pvs=21),String,,Room,,
 Maquette promotionnelle,,,,Plateforme technologique (https://www.notion.so/Plateforme-technologique-3103fe2b3f218191a73fec6dd248990c?pvs=21),PDF,,Promotional mock-up,,
-Modèle de l’équipement,,,,Equipement (https://www.notion.so/Equipement-3103fe2b3f2181c7806bdc89dfd262cd?pvs=21),String,,Equipment model,,
-Marque de l’équipement,,,,Equipement (https://www.notion.so/Equipement-3103fe2b3f2181c7806bdc89dfd262cd?pvs=21),String,,Equipment brand,,
-Lien de réservation,,,,Conditions d’accès (https://www.notion.so/Conditions-d-acc-s-3103fe2b3f2181019e06fa2fbf6990d9?pvs=21),URL,,Booking link,,
+Modèle de l'équipement,,,,Equipement (https://www.notion.so/Equipement-3103fe2b3f2181c7806bdc89dfd262cd?pvs=21),String,,Equipment model,,
+Marque de l'équipement,,,,Equipement (https://www.notion.so/Equipement-3103fe2b3f2181c7806bdc89dfd262cd?pvs=21),String,,Equipment brand,,
+Lien de réservation,,,,Conditions d'accès (https://www.notion.so/Conditions-d-acc-s-3103fe2b3f2181019e06fa2fbf6990d9?pvs=21),URL,,Booking link,,
 Version du logiciel,,,,Logiciel (https://www.notion.so/Logiciel-3183fe2b3f2180aaaf0ac896b8d023f7?pvs=21),String,,Software version,,
-Type,Infrastructure,,"Niveau plus précis de classification d’une ressource, permettant d’identifier sa technologie, son mode de fonctionnement ou sa spécialisation d’usage.",,String,,Type,,"More precise level of classification of a resource, making it possible to identify its technology, operating mode, or specialization of use."
-Caractéristique de l’infrastructure,,,"Conditions environnementales contrôlées, température, humidité, pression, atmosphère contrôlée, normes techniques, systèmes de sécurité",Infrastructure (https://www.notion.so/Infrastructure-31a3fe2b3f2180119b5dd1157fa7be98?pvs=21),String,,Infrastructure characteristics,,"Controlled environmental conditions, temperature, humidity, pressure, controlled atmosphere, technical standards, safety systems."
+Type,Infrastructure,,"Niveau plus précis de classification d'une ressource, permettant d'identifier sa technologie, son mode de fonctionnement ou sa spécialisation d'usage.",,String,,Type,,"More precise level of classification of a resource, making it possible to identify its technology, operating mode, or specialization of use."
+Caractéristique de l'infrastructure,,,"Conditions environnementales contrôlées, température, humidité, pression, atmosphère contrôlée, normes techniques, systèmes de sécurité",Infrastructure (https://www.notion.so/Infrastructure-31a3fe2b3f2180119b5dd1157fa7be98?pvs=21),String,,Infrastructure characteristics,,"Controlled environmental conditions, temperature, humidity, pressure, controlled atmosphere, technical standards, safety systems."
 Portée de la garantie de qualité,,,"Périmètre des activités, services, installations ou processus couverts par une certification.",Garantie de qualité (https://www.notion.so/Garantie-de-qualit-31a3fe2b3f21803c9e97c3bfea060387?pvs=21),String,,Scope of the quality guarantee,,"Scope of activities, services, facilities, or processes covered by a certification."
 Date,Image,,,,DateTime,,Date,,
 Type de bénéficiaire,,,,Bénéficiaire (https://www.notion.so/B-n-ficiaire-31a3fe2b3f2180bf9936e64827ff5dd0?pvs=21),String,,Beneficiary type,,
-Témoignant,,,,Retour d’expérience (https://www.notion.so/Retour-d-exp-rience-3183fe2b3f21801287ecee5f4b0b168f?pvs=21),String,,Witness,,
-Témoignage,,,,Retour d’expérience (https://www.notion.so/Retour-d-exp-rience-3183fe2b3f21801287ecee5f4b0b168f?pvs=21),String,,Testimonial,,
+Témoignant,,,,Retour d'expérience (https://www.notion.so/Retour-d-exp-rience-3183fe2b3f21801287ecee5f4b0b168f?pvs=21),String,,Witness,,
+Témoignage,,,,Retour d'expérience (https://www.notion.so/Retour-d-exp-rience-3183fe2b3f21801287ecee5f4b0b168f?pvs=21),String,,Testimonial,,
 DOI,,,,Production scientifique (https://www.notion.so/Production-scientifique-3103fe2b3f2181169b79eded2d24297f?pvs=21),URI,,DOI,,
 Copyright,,,,Image (https://www.notion.so/Image-3103fe2b3f218192b88ee1fb77d4e65b?pvs=21),String,,Copyright,,
 License,,,,Image (https://www.notion.so/Image-3103fe2b3f218192b88ee1fb77d4e65b?pvs=21),String,,License,,
 Source du financement,,,,Acknowledgement (https://www.notion.so/Acknowledgement-32c3fe2b3f2180378b31f936766a52a6?pvs=21),String,,Funding source,,
 Texte pour publication,,,,Acknowledgement (https://www.notion.so/Acknowledgement-32c3fe2b3f2180378b31f936766a52a6?pvs=21),String,,Text for publication,,
 ROR,,,"Research Organisation Registery
-Exemple : L’ULiège peut avoir un ROR",,URI,,ROR,,"Research Organization Registry.
+Exemple : L'ULiège peut avoir un ROR",,URI,,ROR,,"Research Organization Registry.
 Example: ULiège can have a ROR."

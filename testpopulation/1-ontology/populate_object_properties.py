@@ -1,6 +1,7 @@
 import csv
 import json
 import re
+import unicodedata
 import urllib3
 from pathlib import Path
 from typing import Optional
@@ -28,11 +29,18 @@ def extract_label(value: str) -> Optional[str]:
 # Search
 # -----------------------------------------------------------------------------
 
+def normalize_label(label: str) -> str:
+    """Normalize a label for search and comparison: lowercase, strip, normalize apostrophes."""
+    label = unicodedata.normalize("NFC", label)
+    label = label.replace("\u2019", "'").replace("\u2018", "'")
+    return label.strip().lower()
+
+
 def search_entity_by_label(client: WikibaseClient, label: str, entity_type: str,
                             language: str = "fr") -> Optional[str]:
     response = client.session.get(client.api_url, params={
         "action": "wbsearchentities",
-        "search": label,
+        "search": normalize_label(label),
         "language": language,
         "type": entity_type,
         "format": "json",
@@ -40,7 +48,7 @@ def search_entity_by_label(client: WikibaseClient, label: str, entity_type: str,
     })
     response.raise_for_status()
     for result in response.json().get("search", []):
-        if result["label"].strip().lower() == label.strip().lower():
+        if normalize_label(result["label"]) == normalize_label(label):
             return result["id"]
     return None
 
@@ -256,7 +264,6 @@ def main():
             prop_label_to_id[fr_label] = existing_id
         else:
             prop_id = create_property(client, fr_label, en_label, fr_desc, en_desc, en_aliases)
-            update_property(client, prop_id, fr_label, en_label, fr_desc, en_desc, en_aliases)
             print(f"  CREATED {fr_label} ({prop_id})")
             prop_label_to_id[fr_label] = prop_id
 

@@ -23,7 +23,7 @@ MW_ADMIN_PASS=your-admin-password
 Run the scripts from within the `ontology/` directory in this order:
 
 ```bash
-cd testpopulation/ontology
+cd testpopulation/1-ontology
 
 python populate.py                   # 1. Classes
 python populate_data_properties.py   # 2. Data properties

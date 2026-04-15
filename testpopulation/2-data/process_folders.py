@@ -45,7 +45,7 @@ def search_entity_by_label(client: WikibaseClient, label: str, entity_type: str,
     """Returns the entity ID if an exact label match is found, else None."""
     response = client.session.get(client.api_url, params={
         "action": "wbsearchentities",
-        "search": label,
+        "search": normalize_label(label),
         "language": language,
         "type": entity_type,
         "format": "json",
