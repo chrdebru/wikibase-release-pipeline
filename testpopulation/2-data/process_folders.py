@@ -26,9 +26,16 @@ STRING_DATATYPES = {"string", "url", "external-id", "monolingualtext", "commonsM
 # Search
 # -----------------------------------------------------------------------------
 
-def strip_md_reference(value: str) -> str:
-    """Remove a trailing '(path/to/file.md)' from a value, keeping only the name."""
-    return re.sub(r'\s*\([^)]*\.md\)', '', value).strip()
+def strip_reference(value: str) -> str:
+    """Remove any '(https://...)' or '(path/to/file.md)' parenthetical from a value."""
+    value = re.sub(r'\s*\(https?://[^)]+\)', '', value)
+    value = re.sub(r'\s*\([^)]*\.md\)', '', value)
+    return value.strip()
+
+
+def split_item_values(value: str) -> list[str]:
+    """Split a comma-separated list of item references and strip each one."""
+    return [label for part in value.split(",") if (label := strip_reference(part).strip())]
 
 
 def normalize_label(label: str) -> str:
@@ -75,6 +82,9 @@ def get_property_datatype(client: WikibaseClient, prop_id: str) -> Optional[str]
 # Create / Update
 # -----------------------------------------------------------------------------
 
+_item_cache: dict[str, str] = {}
+
+
 def create_item(client: WikibaseClient, label: str, language: str = "fr") -> str:
     data = {"labels": {language: {"language": language, "value": label}}}
     response = client.session.post(client.api_url, data={
@@ -93,11 +103,23 @@ def create_item(client: WikibaseClient, label: str, language: str = "fr") -> str
 
 def find_or_create_item(client: WikibaseClient, label: str,
                         language: str = "fr") -> tuple[str, bool]:
-    """Returns (entity_id, created). Creates the item if it does not exist."""
+    """Returns (entity_id, created).
+
+    Checks the local cache first, then searches Wikibase by label.
+    Only creates a new item if no existing item with that label is found.
+    """
+    cache_key = normalize_label(label)
+    if cache_key in _item_cache:
+        return _item_cache[cache_key], False
+
     existing_id = search_entity_by_label(client, label, "item", language=language)
     if existing_id:
+        _item_cache[cache_key] = existing_id
         return existing_id, False
-    return create_item(client, label, language), True
+
+    item_id = create_item(client, label, language)
+    _item_cache[cache_key] = item_id
+    return item_id, True
 
 
 def set_description(client: WikibaseClient, entity_id: str,
@@ -244,14 +266,14 @@ def process_column(client: WikibaseClient, item_id: str,
     prop_id, datatype = resolve_property(client, column)
 
     if datatype == "wikibase-item":
-        label = strip_md_reference(value)
-        target_id, created = find_or_create_item(client, label, language="fr")
-        action = "CREATED" if created else "FOUND"
-        if has_item_claim(client, item_id, prop_id, target_id):
-            print(f"      EXISTS  [{column}] -> '{label}' ({target_id})")
-        else:
-            add_item_claim(client, item_id, prop_id, target_id)
-            print(f"      LINKED  [{column}] -> '{label}' ({target_id}) [{action}]")
+        for label in split_item_values(value):
+            target_id, created = find_or_create_item(client, label, language="fr")
+            action = "CREATED" if created else "FOUND"
+            if has_item_claim(client, item_id, prop_id, target_id):
+                print(f"      EXISTS  [{column}] -> '{label}' ({target_id})")
+            else:
+                add_item_claim(client, item_id, prop_id, target_id)
+                print(f"      LINKED  [{column}] -> '{label}' ({target_id}) [{action}]")
 
     elif datatype in STRING_DATATYPES:
         if has_string_claim(client, item_id, prop_id, value):

@@ -245,6 +245,21 @@ def main():
         )
         print(f"  CREATED sous-classe de ({prop_id})")
 
+    print("\n=== Step 2.b: Creating 'est instance de' property ===")
+    prop_id = search_entity_by_label(client, "est instance de", "property")
+    if prop_id:
+        print(f"  EXISTS  est instance de ({prop_id})")
+    else:
+        prop_id = create_property(
+            client,
+            fr_label="est une instance de",
+            en_label="instance of",
+            fr_desc="Indique que le sujet est une instance de l'objet.",
+            en_desc="Indicates that the subject is an instance of the object.",
+            datatype="wikibase-item",
+        )
+        print(f"  CREATED est instance de ({prop_id})")
+
     # ------------------------------------------------------------------
     # Step 3: Create subclass relationships
     # ------------------------------------------------------------------
