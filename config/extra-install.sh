@@ -32,7 +32,8 @@ php /var/www/html/maintenance/edit.php \
     var entityId = mw.config.get( 'wbEntityId' );
     var lang = mw.config.get( 'wgUserLanguage' );
     var wikiBase = mw.config.get( 'wgServer' ) + ( mw.config.get( 'wgScriptPath' ) || '' );
-    var sparqlEndpoint = location.protocol + '//' + location.hostname + '/sparql';
+    // WDQS is served on its own host (WDQS_PUBLIC_HOST), not on the wiki host
+    var sparqlEndpoint = 'https://query.sitys.rise.uliege.be/sparql';
 
     var messages = {
         title: 'Related items',
