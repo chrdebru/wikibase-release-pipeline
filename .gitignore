@@ -46,8 +46,6 @@ Thumbs.db
 # SITYS fork
 testpopulation/backup.*
 !config/Extensions.php
-config/certs/*
-!config/certs/.gitignore
 .nx/cache
 .nx/workspace-data
 .claude/settings.local.json
