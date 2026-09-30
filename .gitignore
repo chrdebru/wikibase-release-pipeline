@@ -51,3 +51,4 @@ config/certs/*
 .nx/cache
 .nx/workspace-data
 .claude/settings.local.json
+/local.env
