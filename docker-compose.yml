@@ -17,6 +17,7 @@ services:
       - ./config:/config:z
       - ./config/extensions:/var/www/html/extensions/extensions:z
       - ./config/extra-install.sh:/extra-install.sh:z
+      - ./config/branding/uliege-logo.svg:/var/www/html/resources/assets/uliege-logo.svg:ro
       - wikibase-image-data:/var/www/html/images
       - quickstatements-data:/quickstatements/data
     env_file:
@@ -27,6 +28,7 @@ services:
       MW_ADMIN_PASS: ${MW_ADMIN_PASS}
       MW_ADMIN_EMAIL: ${MW_ADMIN_EMAIL}
       MW_WG_SERVER: https://${WIKIBASE_PUBLIC_HOST}
+      MW_WG_LANGUAGE_CODE: fr
       DB_SERVER: mysql:3306
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
@@ -38,7 +40,8 @@ services:
       WIKIMEDIA_OAUTH_CONSUMER_TOKEN: ${WIKIMEDIA_OAUTH_CONSUMER_TOKEN:-}
       WIKIMEDIA_OAUTH_SECRET_TOKEN: ${WIKIMEDIA_OAUTH_SECRET_TOKEN:-}
     healthcheck:
-      test: curl --silent --fail localhost/wiki/Main_Page
+      # Not the main page: its title depends on the site language ("Accueil" in French).
+      test: curl --silent --fail localhost/wiki/Special:BlankPage
       interval: 10s
       start_period: 5m
 

@@ -1,0 +1,146 @@
+/*
+ * SITYS theme for the Vector 2022 skin, in the ULiège colours.
+ *
+ * Adapted from the student theme uliege.css, which was written for MediaWiki 1.42.
+ * Loaded on every page by config/Extensions.php.
+ *
+ * Rules to keep when editing this file:
+ * - Do not style `*` or bare `button`: that breaks the icon buttons of Wikibase and Codex.
+ * - Use the --sitys-* variables for colours, so that the dark theme stays readable.
+ */
+
+/* ===== Colours ===== */
+
+html:root {
+	--sitys-accent: #00707f;
+	--sitys-accent-strong: #005a66;
+	--sitys-accent-soft: rgba( 95, 164, 176, 0.12 );
+	--sitys-on-accent: #fff;
+
+	/* Recolour MediaWiki's "progressive" blue: links and primary buttons. */
+	--color-progressive: var( --sitys-accent );
+	--color-progressive--hover: var( --sitys-accent-strong );
+	--color-progressive--active: var( --sitys-accent-strong );
+	--color-progressive--focus: var( --sitys-accent );
+	--color-link: var( --sitys-accent );
+	--color-link--hover: var( --sitys-accent-strong );
+	--color-link--active: var( --sitys-accent-strong );
+	--background-color-progressive: var( --sitys-accent );
+	--background-color-progressive--hover: var( --sitys-accent-strong );
+	--background-color-progressive--active: var( --sitys-accent-strong );
+	--background-color-progressive--focus: var( --sitys-accent );
+	--border-color-progressive: var( --sitys-accent );
+	--border-color-progressive--hover: var( --sitys-accent-strong );
+	--border-color-progressive--active: var( --sitys-accent-strong );
+	--border-color-progressive--focus: var( --sitys-accent );
+}
+
+/* Dark theme: a lighter turquoise, with dark text on it. */
+html.skin-theme-clientpref-night {
+	--sitys-accent: #7fc1cc;
+	--sitys-accent-strong: #a9d8e0;
+	--sitys-accent-soft: rgba( 95, 164, 176, 0.2 );
+	--sitys-on-accent: #101418;
+}
+
+@media screen and ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os {
+		--sitys-accent: #7fc1cc;
+		--sitys-accent-strong: #a9d8e0;
+		--sitys-accent-soft: rgba( 95, 164, 176, 0.2 );
+		--sitys-on-accent: #101418;
+	}
+}
+
+/* ===== Header and logo ===== */
+
+.vector-header-container {
+	border-bottom: 2px solid var( --sitys-accent-soft );
+}
+
+.mw-logo {
+	display: flex;
+	align-items: center;
+}
+
+/* The ULiège logo is wider than it is tall; the skin expects a square icon. */
+.mw-logo .mw-logo-icon {
+	width: auto;
+	height: 50px;
+	max-width: 150px;
+	object-fit: contain;
+}
+
+.mw-logo .mw-logo-wordmark {
+	color: var( --sitys-accent );
+}
+
+/* ===== Headings ===== */
+
+.mw-body h1,
+.mw-body h2,
+.mw-body h3,
+.mw-body .mw-first-heading,
+.mw-body .mw-page-title-main {
+	color: var( --sitys-accent );
+}
+
+.mw-body .mw-first-heading {
+	border-bottom: 3px solid var( --sitys-accent );
+	padding-bottom: 8px;
+}
+
+.mw-body .mw-body-content h2 {
+	border-bottom: 2px solid var( --sitys-accent-soft );
+	padding-bottom: 6px;
+}
+
+/* ===== Side menus ===== */
+
+html .vector-main-menu .vector-menu-heading,
+html .vector-page-tools .vector-menu-heading {
+	background: var( --sitys-accent );
+	color: var( --sitys-on-accent );
+	font-weight: 600;
+	padding: 6px 10px;
+	border-bottom: 0;
+	border-radius: 4px;
+}
+
+/* ===== Page tabs ===== */
+
+/* The skin sets this colour with !important, so this rule needs it too.
+   The underline of the selected tab takes the same colour. */
+.vector-menu-tabs .mw-list-item.selected a,
+.vector-menu-tabs .mw-list-item.selected a:visited {
+	color: var( --sitys-accent ) !important;
+}
+
+/* ===== Tables in wiki pages ===== */
+
+.mw-parser-output .wikitable > * > tr > th {
+	background: var( --sitys-accent );
+	color: var( --sitys-on-accent );
+	text-align: left;
+}
+
+.mw-parser-output .wikitable > * > tr:hover > td {
+	background: var( --sitys-accent-soft );
+}
+
+/* ===== Wikibase item and property pages ===== */
+
+.wikibase-entitytermsview-heading,
+.wikibase-statementgroupview-property-label a {
+	color: var( --sitys-accent );
+}
+
+.wikibase-entitytermsview-heading {
+	font-weight: 600;
+}
+
+/* ===== Footer ===== */
+
+.mw-footer-container .mw-footer {
+	border-top: 2px solid var( --sitys-accent-soft );
+}
