@@ -222,6 +222,7 @@ services:
       # - 8080:8080
     volumes:
       - ./config/traefik-dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - ./config/traefik-secrets:/etc/traefik/secrets:ro
       - traefik-letsencrypt-data:/letsencrypt
     environment:
       WIKIBASE_PUBLIC_HOST: ${WIKIBASE_PUBLIC_HOST}

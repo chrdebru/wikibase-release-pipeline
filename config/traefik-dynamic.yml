@@ -27,6 +27,11 @@ http:
         servers:
           - url: "http://ontodia:80"
 
+    opensearch:
+      loadBalancer:
+        servers:
+          - url: "http://elasticsearch:9200"
+
   routers:
     wikibase-router:
       rule: 'Host(`{{ env "WIKIBASE_PUBLIC_HOST" }}`) && !PathPrefix(`/tools`)'
@@ -49,6 +54,15 @@ http:
     ontodia-router:
       rule: 'Host(`{{ env "ONTODIA_PUBLIC_HOST" }}`)'
       service: ontodia
+
+    # Read-only search API for external applications (DEUSE). Only _search, _count,
+    # _msearch (GET/POST) and _mapping (GET) reach OpenSearch, which itself has no
+    # access control.
+    opensearch-router:
+      rule: 'Host(`{{ env "WIKIBASE_PUBLIC_HOST" }}`) && ((PathRegexp(`^/opensearch/[^/]+/_(search|count|msearch)$`) && (Method(`GET`) || Method(`POST`))) || (PathRegexp(`^/opensearch/[^/]+/_mapping$`) && Method(`GET`)))'
+      service: opensearch
+      priority: 1000
+      middlewares: [ opensearch-auth, opensearch-stripprefix ]
 
   middlewares:
     wdqs-prefix:
@@ -81,3 +95,19 @@ http:
     quickstatements-stripprefix:
       stripPrefix:
         prefixes: [ /tools/quickstatements ]
+
+    # Users are in config/traefik-secrets/opensearch.htpasswd (not in git). Create with:
+    #   docker run --rm httpd:alpine htpasswd -nbB <user> '<password>' > config/traefik-secrets/opensearch.htpasswd
+    opensearch-auth:
+      basicAuth:
+        usersFile: /etc/traefik/secrets/opensearch.htpasswd
+
+    opensearch-stripprefix:
+      stripPrefix:
+        prefixes: [ /opensearch ]
+
+    # To also restrict by caller address, set the IP below and add opensearch-ipallow
+    # as the first middleware of opensearch-router.
+    # opensearch-ipallow:
+    #   ipAllowList:
+    #     sourceRange: [ "203.0.113.10/32" ]
