@@ -14,6 +14,10 @@ $wgLocaltimezone = 'Europe/Brussels';
 $wgRightsText = '© Université de Liège - Tous droits réservés';
 $wgRightsUrl = 'https://www.uliege.be/';
 
+# RDF exports state the licence as a link (cc:license), not as text. Wikibase's default is
+# CC0, which would contradict the footer, so this points to the same link as the footer.
+$wgWBRepoSettings['rdfDataRightsUrl'] = $wgRightsUrl;
+
 # Branding: the ULiège logo and the SITYS theme, both in config/branding/.
 # docker-compose.yml mounts the logo into the web root.
 $wgLogos = [
