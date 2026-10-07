@@ -5,9 +5,9 @@
 
 $wgSitename = 'SITYS';
 
-# Site language and time zone. Fresh installs also get the language through
-# MW_WG_LANGUAGE_CODE in docker-compose.yml, so that the main page is created in French.
-$wgLanguageCode = 'fr';
+# The site language stays English (set at install), so that built-in pages keep their
+# standard names (Special:EntityData, Main Page). Visitors still get the interface in their
+# browser's language, through the UniversalLanguageSelector extension.
 $wgLocaltimezone = 'Europe/Brussels';
 
 # Copyright line in the page footer.
