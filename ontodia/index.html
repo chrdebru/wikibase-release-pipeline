@@ -19,10 +19,72 @@
   <script type="text/javascript">	  
 	//<![CDATA[
 					
-	b2022Settings = { 
-		...Ontodia.OWLStatsSettings, 
-		filterTypePattern: '?inst a ?class . '
-	} ;
+	// Settings for the SITYS Wikibase, adapted from Ontodia.WikidataSettings.
+	// Wikibase does not write rdf:type for items, so classes come from the SITYS
+	// properties P1 ("instance of") and P2 ("subclass of").
+	// The query service has no full-text index, so search uses a label filter.
+	var WIKIBASE = 'http://wikiba.se/ontology#';
+	sitysSettings = {
+		...Ontodia.WikidataSettings,
+		defaultPrefix:
+			'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n' +
+			'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n' +
+			'PREFIX owl: <http://www.w3.org/2002/07/owl#>\n' +
+			'PREFIX wikibase: <' + WIKIBASE + '>\n' +
+			'PREFIX wd: <https://sitys.rise.uliege.be/entity/>\n' +
+			'PREFIX wdt: <https://sitys.rise.uliege.be/prop/direct/>\n\n',
+		fullTextSearch: {
+			prefix: '',
+			queryPattern:
+				'?inst rdfs:label ?searchLabel .\n' +
+				'FILTER(CONTAINS(LCASE(STR(?searchLabel)), LCASE("${text}")))\n' +
+				'BIND(0 AS ?score)\n',
+		},
+		classTreeQuery:
+			'SELECT DISTINCT ?class ?label ?parent WHERE {\n' +
+			'  { ?someInst wdt:P1 ?class } UNION { ?class wdt:P2 ?someParent } UNION { ?someChild wdt:P2 ?class }\n' +
+			'  OPTIONAL { ?class rdfs:label ?label }\n' +
+			'  OPTIONAL { ?class wdt:P2 ?parent }\n' +
+			'}\n',
+		linkTypesPattern:
+			'?prop wikibase:directClaim ?link .\n' +
+			'BIND(0 AS ?instcount)\n',
+		linkTypesQuery:
+			'SELECT DISTINCT ?link ?instcount ?label WHERE {\n' +
+			'  ?prop wikibase:directClaim ?link .\n' +
+			'  BIND(0 AS ?instcount)\n' +
+			'  OPTIONAL { ?prop rdfs:label ?label }\n' +
+			'}\n',
+		linkTypesInfoQuery:
+			'SELECT ?link ?label WHERE {\n' +
+			'  VALUES(?link) {${ids}}\n' +
+			'  OPTIONAL { ?prop wikibase:directClaim ?link . ?prop rdfs:label ?label }\n' +
+			'}\n',
+		elementInfoQuery:
+			'CONSTRUCT {\n' +
+			'  ?inst rdf:type ?class .\n' +
+			'  ?inst rdfs:label ?label .\n' +
+			'  ?inst ?propType ?propValue .\n' +
+			'} WHERE {\n' +
+			'  VALUES (?inst) {${ids}}\n' +
+			'  OPTIONAL { ?inst wdt:P1 ?class }\n' +
+			'  OPTIONAL { ?inst rdfs:label ?label }\n' +
+			'  OPTIONAL {\n' +
+			'    ${propertyConfigurations}\n' +
+			'    FILTER (isLiteral(?propValue))\n' +
+			'  }\n' +
+			'}\n',
+		// No images in SITYS: a pattern that never matches.
+		imageQueryPattern: '?inst <urn:sitys:no-image> ?image .',
+		filterTypePattern: '?inst wdt:P1 ?instType . ?instType wdt:P2* ?class .',
+		filterAdditionalRestriction:
+			'FILTER ISIRI(?inst)\n' +
+			'BIND(STR(?inst) AS ?strInst)\n',
+		filterElementInfoPattern:
+			'OPTIONAL { ?inst wdt:P1 ?foundClass }\n' +
+			'BIND(COALESCE(?foundClass, owl:Thing) AS ?class)\n' +
+			'OPTIONAL { ?inst rdfs:label ?label }\n',
+	};
 	
     window.onload = function () {
         function onWorkspaceMounted(workspace) {
@@ -31,7 +93,7 @@
                 dataProvider: new Ontodia.SparqlDataProvider({
                     endpointUrl: 'https://query.sitys.rise.uliege.be/sparql',
                     queryMethod: Ontodia.SparqlQueryMethod.POST,
-                }, b2022Settings)
+                }, sitysSettings)
             });
         }
 
