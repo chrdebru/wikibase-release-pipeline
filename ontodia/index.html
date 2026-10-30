@@ -14,6 +14,19 @@
       margin: 0;
       padding: 0;
     }
+    #view-toggle {
+      position: fixed;
+      left: 12px;
+      bottom: 12px;
+      z-index: 10;
+      padding: 6px 10px;
+      background: #fff;
+      border: 1px solid #00707f;
+      border-radius: 4px;
+      color: #00707f;
+      font: 13px sans-serif;
+      text-decoration: none;
+    }
   </style>
 
   <script type="text/javascript">	  
@@ -32,7 +45,13 @@
 			'PREFIX owl: <http://www.w3.org/2002/07/owl#>\n' +
 			'PREFIX wikibase: <' + WIKIBASE + '>\n' +
 			'PREFIX wd: <https://sitys.rise.uliege.be/entity/>\n' +
-			'PREFIX wdt: <https://sitys.rise.uliege.be/prop/direct/>\n\n',
+			'PREFIX wdt: <https://sitys.rise.uliege.be/prop/direct/>\n' +
+			'PREFIX p: <https://sitys.rise.uliege.be/prop/>\n' +
+			'PREFIX ps: <https://sitys.rise.uliege.be/prop/statement/>\n' +
+			'PREFIX pq: <https://sitys.rise.uliege.be/prop/qualifier/>\n' +
+			'PREFIX pr: <https://sitys.rise.uliege.be/prop/reference/>\n' +
+			'PREFIX prov: <http://www.w3.org/ns/prov#>\n' +
+			'PREFIX schema: <http://schema.org/>\n\n',
 		fullTextSearch: {
 			prefix: '',
 			queryPattern:
@@ -85,15 +104,159 @@
 			'BIND(COALESCE(?foundClass, owl:Thing) AS ?class)\n' +
 			'OPTIONAL { ?inst rdfs:label ?label }\n',
 	};
+
+	// Labels for the predicates Wikibase uses around statements. Shared by both views.
+	// Binds ?label for ?property: direct values (wdt:), statement values (ps:),
+	// qualifiers (pq:), reference values (pr:), plus the rank and description.
+	var PROPERTY_LABEL =
+		'{ ?pp wikibase:directClaim|wikibase:statementProperty|wikibase:reference ?property ; rdfs:label ?label }\n' +
+		'UNION { ?pp wikibase:qualifier ?property ; rdfs:label ?l0 .\n' +
+		'  BIND(STRLANG(CONCAT(STR(?l0), IF(LANGMATCHES(LANG(?l0), "fr"), " (qualificatif)", " (qualifier)")), LANG(?l0)) AS ?label) }\n' +
+		'UNION { VALUES (?property ?label) {\n' +
+		'  (<urn:sitys:rank> "rang"@fr) (<urn:sitys:rank> "rank"@en)\n' +
+		'  (schema:description "description"@fr) (schema:description "description"@en) } }\n';
+	sitysSettings.propertyInfoQuery =
+		'SELECT ?property ?label WHERE {\n' +
+		'  VALUES(?property) {${ids}}\n' +
+		'  OPTIONAL { ' + PROPERTY_LABEL + ' }\n' +
+		'}\n';
+
+	// ------------------------------------------------------------------
+	// Statement view (?view=statements): statements and references as boxes.
+	//   item --[property]--> statement --[property (valeur)]--> value item
+	//   statement --[property (qualificatif)]--> qualifier value
+	//   statement --[référence]--> reference --[property (source)]--> source item
+	// A statement box is labelled "property : value · rank" and lists its
+	// literal values, qualifiers and rank. Direct (truthy) links are hidden,
+	// so deprecated and non-preferred statements also show.
+	// ------------------------------------------------------------------
+
+	// Rank name for ?rank, in the language given by the SPARQL expression lang.
+	function rankName(lang) {
+		return 'IF(?rank = wikibase:PreferredRank, IF(LANGMATCHES(' + lang + ', "fr"), "préféré", "preferred"),\n' +
+			'  IF(?rank = wikibase:DeprecatedRank, IF(LANGMATCHES(' + lang + ', "fr"), "obsolète", "deprecated"), "normal"))';
+	}
+
+	// Restricts ?link to the predicates of the statement model.
+	var STATEMENT_LINKS =
+		'{ ?lp wikibase:claim|wikibase:statementProperty|wikibase:qualifier|wikibase:reference ?link }\n' +
+		'UNION { VALUES ?link { prov:wasDerivedFrom } }\n';
+
+	// Binds ?label for ?link.
+	function linkSuffix(fr, en) {
+		return 'BIND(STRLANG(CONCAT(STR(?l0), IF(LANGMATCHES(LANG(?l0), "fr"), " (' + fr + ')", " (' + en + ')")), LANG(?l0)) AS ?label)';
+	}
+	var STATEMENT_LINK_LABEL =
+		'{ ?lp wikibase:claim ?link ; rdfs:label ?label }\n' +
+		'UNION { ?lp wikibase:statementProperty ?link ; rdfs:label ?l0 . ' + linkSuffix('valeur', 'value') + ' }\n' +
+		'UNION { ?lp wikibase:qualifier ?link ; rdfs:label ?l0 . ' + linkSuffix('qualificatif', 'qualifier') + ' }\n' +
+		'UNION { ?lp wikibase:reference ?link ; rdfs:label ?l0 . ' + linkSuffix('source', 'source') + ' }\n' +
+		'UNION { VALUES (?link ?label) { (prov:wasDerivedFrom "référence"@fr) (prov:wasDerivedFrom "reference"@en) } }\n';
+
+	// Binds ?label and ?class for ?inst, which may be an item, a statement or a reference.
+	var STATEMENT_ELEMENT_INFO =
+		'OPTIONAL { ?inst rdfs:label ?itemLabel }\n' +
+		'OPTIONAL {\n' +
+		'  ?inst wikibase:rank ?rank .\n' +
+		'  ?stSubject ?claimPred ?inst .\n' +
+		'  ?stProp wikibase:claim ?claimPred ; wikibase:statementProperty ?stValuePred ; rdfs:label ?stPropLabel .\n' +
+		'  OPTIONAL { ?inst ?stValuePred ?stLiteral FILTER(isLiteral(?stLiteral)) }\n' +
+		'  OPTIONAL { ?inst ?stValuePred ?stValueItem . ?stValueItem rdfs:label ?stValueLabel\n' +
+		'             FILTER(LANG(?stValueLabel) = LANG(?stPropLabel)) }\n' +
+		// The value may lack a label in the property label's language: fall back to fr, then en.
+		'  OPTIONAL { ?inst ?stValuePred ?stValueItemFr . ?stValueItemFr rdfs:label ?stValueLabelFr\n' +
+		'             FILTER(LANG(?stValueLabelFr) = "fr") }\n' +
+		'  OPTIONAL { ?inst ?stValuePred ?stValueItemEn . ?stValueItemEn rdfs:label ?stValueLabelEn\n' +
+		'             FILTER(LANG(?stValueLabelEn) = "en") }\n' +
+		'  BIND(COALESCE(STR(?stLiteral), STR(?stValueLabel), STR(?stValueLabelFr), STR(?stValueLabelEn)) AS ?stValueText)\n' +
+		'  BIND(STRLANG(CONCAT(STR(?stPropLabel), IF(BOUND(?stValueText), CONCAT(" : ", ?stValueText), ""),\n' +
+		'    " · ", ' + rankName('LANG(?stPropLabel)') + '), LANG(?stPropLabel)) AS ?stLabel)\n' +
+		'}\n' +
+		'OPTIONAL {\n' +
+		'  FILTER EXISTS { ?refStatement prov:wasDerivedFrom ?inst }\n' +
+		'  VALUES ?refLabel { "Référence"@fr "Reference"@en }\n' +
+		'}\n' +
+		'BIND(COALESCE(?itemLabel, ?stLabel, ?refLabel) AS ?label)\n' +
+		'OPTIONAL { ?inst wdt:P1 ?foundClass }\n' +
+		'BIND(COALESCE(?foundClass, IF(BOUND(?rank), wikibase:Statement,\n' +
+		'  IF(BOUND(?refLabel), wikibase:Reference, owl:Thing))) AS ?class)\n';
+
+	sitysStatementSettings = {
+		...sitysSettings,
+		classInfoQuery:
+			'SELECT ?class ?label ?instcount WHERE {\n' +
+			'  VALUES(?class) {${ids}}\n' +
+			'  OPTIONAL {\n' +
+			'    { ?class rdfs:label ?label }\n' +
+			'    UNION { VALUES (?class ?label) {\n' +
+			'      (wikibase:Statement "Déclaration"@fr) (wikibase:Statement "Statement"@en)\n' +
+			'      (wikibase:Reference "Référence"@fr) (wikibase:Reference "Reference"@en) } }\n' +
+			'  }\n' +
+			'  BIND("" AS ?instcount)\n' +
+			'}\n',
+		linkTypesPattern: STATEMENT_LINKS + 'BIND(0 AS ?instcount)\n',
+		linkTypesQuery:
+			'SELECT DISTINCT ?link ?instcount ?label WHERE {\n' +
+			STATEMENT_LINK_LABEL +
+			'  BIND(0 AS ?instcount)\n' +
+			'}\n',
+		linkTypesInfoQuery:
+			'SELECT ?link ?label WHERE {\n' +
+			'  VALUES(?link) {${ids}}\n' +
+			'  OPTIONAL { ' + STATEMENT_LINK_LABEL + ' }\n' +
+			'}\n',
+		linkTypesOfQuery:
+			'SELECT DISTINCT ?link WHERE {\n' +
+			'  ${linkConfigurations}\n' +
+			// Literal values (text, dates) have no box to navigate to.
+			'  FILTER(isIRI(COALESCE(?outObject, ?inObject)))\n' +
+			STATEMENT_LINKS +
+			'}\n',
+		linksInfoQuery:
+			'SELECT ?source ?type ?target WHERE {\n' +
+			'  ${linkConfigurations}\n' +
+			'  VALUES (?source) {${ids}}\n' +
+			'  VALUES (?target) {${ids}}\n' +
+			STATEMENT_LINKS.replace(/\?link\b/g, '?type') +
+			'}\n',
+		filterRefElementLinkPattern: STATEMENT_LINKS,
+		elementInfoQuery:
+			'CONSTRUCT {\n' +
+			'  ?inst rdf:type ?class .\n' +
+			'  ?inst rdfs:label ?label .\n' +
+			'  ?inst ?propType ?propValue .\n' +
+			'} WHERE {\n' +
+			'  VALUES (?inst) {${ids}}\n' +
+			'  { ' + STATEMENT_ELEMENT_INFO + ' }\n' +
+			'  UNION {\n' +
+			'    ?inst ?propType ?propValue .\n' +
+			'    FILTER(isLiteral(?propValue))\n' +
+			'    FILTER(STRSTARTS(STR(?propType), "https://sitys.rise.uliege.be/prop/") || ?propType = schema:description)\n' +
+			'  }\n' +
+			'  UNION {\n' +
+			'    ?inst wikibase:rank ?rank .\n' +
+			'    BIND(<urn:sitys:rank> AS ?propType)\n' +
+			// One value only: Ontodia lists every language's value side by side.
+			'    BIND(' + rankName('"fr"') + ' AS ?propValue)\n' +
+			'  }\n' +
+			'}\n',
+		filterElementInfoPattern: STATEMENT_ELEMENT_INFO,
+	};
 	
+    var statementView = new URLSearchParams(window.location.search).get('view') === 'statements';
+
     window.onload = function () {
+        var toggle = document.getElementById('view-toggle');
+        toggle.href = statementView ? '?' : '?view=statements';
+        toggle.textContent = statementView ? 'Vue simple' : 'Vue détaillée (déclarations, rangs, références)';
+
         function onWorkspaceMounted(workspace) {
             if (!workspace) { return; }
             workspace.getModel().importLayout({        
                 dataProvider: new Ontodia.SparqlDataProvider({
                     endpointUrl: 'https://query.sitys.rise.uliege.be/sparql',
                     queryMethod: Ontodia.SparqlQueryMethod.POST,
-                }, sitysSettings)
+                }, statementView ? sitysStatementSettings : sitysSettings)
             });
         }
 
@@ -116,6 +279,7 @@
 
 <body>
   <div id="container"></div>
+  <a id="view-toggle" href="?view=statements"></a>
 </body>
 
 </html>
